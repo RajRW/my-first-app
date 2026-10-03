@@ -98,6 +98,14 @@ li .delete {
   border: 1px solid var(--line);
 }
 
+.clear-done {
+  margin-top: 16px;
+  padding: 6px 12px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+}
+
 .empty {
   color: var(--muted);
 }

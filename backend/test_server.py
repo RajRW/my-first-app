@@ -44,6 +44,13 @@ class DatabaseTests(unittest.TestCase):
         self.assertFalse(server.delete_task(self.db, task["id"]))
         self.assertEqual(server.list_tasks(self.db), [])
 
+    def test_clear_done_removes_only_finished_tasks(self):
+        milk = server.add_task(self.db, "Buy milk")
+        bread = server.add_task(self.db, "Buy bread")
+        server.set_done(self.db, milk["id"], True)
+        self.assertEqual(server.clear_done(self.db), 1)
+        self.assertEqual(server.list_tasks(self.db), [bread])
+
 
 class ApiTests(unittest.TestCase):
     """Starts the real web server on a spare port and talks to it like a browser would."""
@@ -88,6 +95,14 @@ class ApiTests(unittest.TestCase):
         status, _ = self.call("DELETE", f"/api/tasks/{task['id']}")
         self.assertEqual(status, 200)
         self.assertEqual(self.call("GET", "/api/tasks"), (200, []))
+
+    def test_clear_finished(self):
+        _, done = self.call("POST", "/api/tasks", {"title": "Learn Git"})
+        _, todo = self.call("POST", "/api/tasks", {"title": "Learn GitHub"})
+        self.call("PATCH", f"/api/tasks/{done['id']}", {"done": True})
+
+        self.assertEqual(self.call("DELETE", "/api/tasks/done"), (200, {"cleared": 1}))
+        self.assertEqual(self.call("GET", "/api/tasks"), (200, [todo]))
 
     def test_blank_title_gives_400(self):
         status, body = self.call("POST", "/api/tasks", {"title": ""})
