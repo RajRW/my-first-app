@@ -1,0 +1,6 @@
+# Files Git should NOT save. The database is your personal data, not code.
+data/
+__pycache__/
+*.pyc
+.venv/
+.env
