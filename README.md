@@ -51,8 +51,8 @@ python -m unittest discover backend
 
 ## Lesson 2: Git (saving history on your computer)
 
-Git is not installed on this computer yet. Get it from https://git-scm.com/download/win
-(the default options are fine), then close and reopen VS Code.
+Git is installed on this computer, and the first two steps below are already done for this
+project. They are listed so you know what to do on a new computer or a new project.
 
 Tell Git who you are (once per computer):
 ```powershell
