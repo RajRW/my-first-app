@@ -7,6 +7,7 @@ const form = document.getElementById("add-form");
 const titleInput = document.getElementById("title");
 const summary = document.getElementById("summary");
 const errorBox = document.getElementById("error");
+const clearButton = document.getElementById("clear-done");
 
 // Send a request to the backend and return its JSON answer.
 async function api(method, path, body) {
@@ -30,6 +31,8 @@ function render(tasks) {
 
   const left = tasks.filter((task) => !task.done).length;
   summary.textContent = tasks.length ? `${left} of ${tasks.length} left to do` : "";
+  // Only offer "Clear finished" when there is something finished to clear.
+  clearButton.hidden = left === tasks.length;
 
   if (tasks.length === 0) {
     const empty = document.createElement("li");
@@ -88,5 +91,7 @@ form.addEventListener("submit", async (event) => {
   titleInput.focus();
   await change(() => api("POST", "/api/tasks", { title }));
 });
+
+clearButton.addEventListener("click", () => change(() => api("DELETE", "/api/tasks/done")));
 
 refresh().catch((error) => showError(error.message));

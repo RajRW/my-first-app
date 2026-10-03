@@ -80,6 +80,13 @@ def delete_task(db, task_id):
     return cursor.rowcount > 0
 
 
+def clear_done(db):
+    """Delete every finished task. Returns how many were removed."""
+    cursor = db.execute("DELETE FROM tasks WHERE done = 1")
+    db.commit()
+    return cursor.rowcount
+
+
 # ---------- Web server: turns browser requests into database calls ----------
 
 class Handler(BaseHTTPRequestHandler):
@@ -119,6 +126,9 @@ class Handler(BaseHTTPRequestHandler):
         self.send_json(200, task)
 
     def do_DELETE(self):
+        if self.path == "/api/tasks/done":
+            with self.open_db() as db:
+                return self.send_json(200, {"cleared": clear_done(db)})
         task_id = self.task_id_from_path()
         if task_id is None:
             return self.send_json(404, {"error": "Not found"})
